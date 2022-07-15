@@ -114,7 +114,9 @@ Import-Csv $datafile | ForEach-Object {
     }
     elseif ($_.type -eq "trace") {
         $r = Test-NetConnection -ComputerName $_.address -TraceRoute
-        $Output = "Trace to " + $_.name + " - " + $_.address + ". Path is: " + $r.TraceRoute + "`nRTT: " + ($r | Select -expandproperty PingReplyDetails).RoundtripTime + " ms"
+        $Output = "Trace to " + $_.name + " - " + $_.address + ". Path is: `n"
+        $r.TraceRoute | foreach { $Output+=$_+"`n" }
+        $Output += "RTT: " + ($r | Select -expandproperty PingReplyDetails).RoundtripTime + " ms"
         $Output = "`r`n------------- " + $_.type + " --------------`r`n" + $output
         Write-Host $Output
         Add-Content $OutFile $Output
@@ -168,3 +170,4 @@ Import-Csv $datafile | ForEach-Object {
         Add-Content $OutFile $Output
     }
 }
+
